@@ -1,0 +1,21 @@
+<view class="page loginpage">
+  <view class="login-top">
+    <view class="mark">PeacePet</view>
+    <view class="brandline">电子小票</view>
+  </view>
+
+  <view class="login-mid" tt:if="{{!checking}}">
+    <view class="login-title">登录后查看你的每一张小票</view>
+    <view class="login-desc">每次消费都会留一张小票。<br/>登录后，属于你的记录都会出现在这里。</view>
+  </view>
+
+  <view class="login-checking" tt:if="{{checking}}">正在进入…</view>
+
+  <view class="login-bottom" tt:if="{{!checking}}">
+    <view class="err login-error" tt:if="{{error}}">{{error}}</view>
+    <button class="btn primary login-btn" bindtap="onLogin" disabled="{{loggingIn}}">
+      {{loggingIn ? '登录中…' : '抖音登录'}}
+    </button>
+    <view class="login-foot">PeacePet · 店号 843252</view>
+  </view>
+</view>

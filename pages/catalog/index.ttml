@@ -1,0 +1,215 @@
+<view class="catalog-page">
+  <view class="topB">
+    <view class="topB-main">
+      <view class="topB-left">
+        <view class="topB-label-row">
+          <text class="topB-label">{{topLabel}}</text>
+          <view class="pet-switch">
+            <view class="pet-chip {{pet === 'cat' ? 'active' : ''}}" data-pet="cat" bindtap="switchPet">猫</view>
+            <view class="pet-chip {{pet === 'dog' ? 'active' : ''}}" data-pet="dog" bindtap="switchPet">狗</view>
+          </view>
+        </view>
+        <view class="topB-number">
+          <text class="topB-big">{{topNum}}</text>
+          <text class="topB-den" tt:if="{{topReady}}">/{{topDen}}</text>
+        </view>
+        <view class="topB-bar" tt:if="{{topReady}}"><view class="topB-fill" style="width: {{topPct}}%;"></view></view>
+        <view class="topB-sub">
+          <text class="topB-sub-strong">{{topSubMain}}</text>
+          <text class="topB-sub-rest">{{topSubRest}}</text>
+        </view>
+      </view>
+      <view class="topB-entries">
+        <view class="topB-entry {{tab === 'brand' ? 'active' : ''}}" data-tab="brand" bindtap="switchTab">
+          <text>品牌</text><text class="topB-arrow">›</text>
+        </view>
+        <view class="topB-entry {{tab === 'product' ? 'active' : ''}}" data-tab="product" bindtap="switchTab">
+          <text>产品</text><text class="topB-arrow">›</text>
+        </view>
+        <view class="topB-entry {{tab === 'progress' ? 'active' : ''}}" data-tab="progress" bindtap="switchTab">
+          <text>我的</text><text class="topB-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="brand-hint-row" tt:if="{{tab === 'brand'}}">
+      <text>{{brandTotal}} 个品牌 · 每天更新</text>
+    </view>
+    <view class="brand-hint-row" tt:if="{{tab === 'product'}}">
+      <text>{{productTotal}} 个产品 · 每天更新</text>
+    </view>
+    <view class="filter-row progress-switch-row" tt:if="{{tab === 'progress'}}">
+      <view class="filter-chip {{progressMode === 'nearly' ? 'active' : ''}}" data-mode="nearly" bindtap="switchProgressMode">差一点</view>
+      <view class="filter-chip {{progressMode === 'completed' ? 'active' : ''}}" data-mode="completed" bindtap="switchProgressMode">已集齐</view>
+    </view>
+  </view>
+
+  <view class="loading" tt:if="{{loading}}">加载中…</view>
+  <view class="errbox" tt:if="{{error && !loading}}">
+    <view class="err">{{error}}</view>
+    <button class="btn" bindtap="retry">重试</button>
+  </view>
+
+  <block tt:if="{{!loading && !error}}">
+    <view class="brand-grid" tt:if="{{tab === 'brand'}}">
+      <view class="brand-card {{item.state}}" tt:for="{{brands}}" tt:key="id" data-id="{{item.id}}" bindtap="openBrand">
+        <view class="brand-head">
+          <text class="brand-name">{{item.name}}</text>
+          <view class="brand-count">
+            <text class="brand-star" tt:if="{{item.state === 'complete'}}">★</text>
+            <text>{{item.lit_cells}}/{{item.total_cells}}</text>
+          </view>
+        </view>
+        <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+        <view class="swatches">
+          <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+            <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+            <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+            <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+            <view class="swatch-q" tt:else>?</view>
+          </view>
+        </view>
+        <view class="brand-names">{{item.lit_names}}</view>
+        <view class="brand-more" tt:if="{{item.more_count > 0}}">还有 {{item.more_count}} 个 →</view>
+      </view>
+    </view>
+
+    <view class="product-grid" tt:if="{{tab === 'product'}}">
+      <view class="pcard {{item.is_complete ? 'complete' : ''}}" tt:for="{{products}}" tt:key="id" data-id="{{item.id}}" data-brand="{{item.brand_id}}" data-ready="{{item.has_ready_flavor ? 1 : 0}}" bindtap="openProduct">
+        <view class="pcard-top">
+          <text class="pcard-name">{{item.display_name}}</text>
+          <view class="pcard-num {{item.lit === 0 ? 'zero' : ''}}">
+            <text class="pcard-stars" tt:if="{{item.star_text}}">{{item.star_text}}</text>
+            <text>{{item.lit}}/{{item.total}}</text>
+          </view>
+        </view>
+        <view class="pcard-brand-tag">{{item.brand_name}}</view>
+        <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+        <view class="swatches">
+          <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+            <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+            <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+            <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+            <view class="swatch-q" tt:else>?</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="progress-loading" tt:if="{{tab === 'progress' && progressLoading}}">加载中…</view>
+    <view class="errbox" tt:if="{{tab === 'progress' && progressError && !progressLoading}}">
+      <view class="err">{{progressError}}</view>
+      <button class="btn" bindtap="retry">重试</button>
+    </view>
+
+    <block tt:if="{{tab === 'progress' && !progressLoading && !progressError && progressMode === 'nearly' && nearly}}">
+      <view class="progress-section">
+        <view class="progress-head"><text>还差一点的品牌</text><text class="progress-head-count">{{nearly.brands.length}} 个</text></view>
+        <view class="my-grid" tt:if="{{nearly.brands.length > 0}}">
+          <view class="pcard {{item.is_complete ? 'complete' : ''}}" tt:for="{{nearly.brands}}" tt:key="id" data-id="{{item.id}}" bindtap="openProgressBrand">
+            <view class="pcard-top">
+              <text class="pcard-name">{{item.display_name}}</text>
+              <view class="pcard-num"><text>{{item.display_lit}}/{{item.display_total}}</text></view>
+            </view>
+            <view class="swatches">
+              <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+                <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+                <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+                <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+                <view class="swatch-q" tt:else>?</view>
+              </view>
+            </view>
+              <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+          </view>
+        </view>
+        <view class="progress-empty" tt:else>还没有差一点的品牌</view>
+      </view>
+
+      <view class="progress-section">
+        <view class="progress-head"><text>还差一点的产品</text><text class="progress-head-count">{{nearly.products.length}} 个</text></view>
+        <view class="my-grid" tt:if="{{nearly.products.length > 0}}">
+          <view class="pcard {{item.is_complete ? 'complete' : ''}}" tt:for="{{nearly.products}}" tt:key="id" data-id="{{item.id}}" data-brand="{{item.brand_id}}" data-ready="{{item.has_ready_flavor ? 1 : 0}}" bindtap="openProgressProduct">
+            <view class="pcard-top">
+              <text class="pcard-name">{{item.display_name}}</text>
+              <view class="pcard-num"><text class="pcard-stars" tt:if="{{item.star_text}}">{{item.star_text}}</text><text>{{item.display_lit}}/{{item.display_total}}</text></view>
+            </view>
+            <view class="pcard-brand-tag">{{item.brand_name}}</view>
+            <view class="swatches">
+              <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+                <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+                <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+                <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+                <view class="swatch-q" tt:else>?</view>
+              </view>
+            </view>
+              <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+          </view>
+        </view>
+        <view class="progress-empty" tt:else>还没有差一点的产品</view>
+      </view>
+    </block>
+
+    <block tt:if="{{tab === 'progress' && !progressLoading && !progressError && progressMode === 'completed' && completed}}">
+      <block tt:if="{{completed.brands.length > 0 || completed.products.length > 0}}">
+        <view class="progress-section">
+          <view class="progress-head"><text>已集齐的品牌</text><text class="progress-head-count">{{completed.brands.length}} 个</text></view>
+          <view class="my-grid" tt:if="{{completed.brands.length > 0}}">
+            <view class="pcard complete" tt:for="{{completed.brands}}" tt:key="id" data-id="{{item.id}}" bindtap="openProgressBrand">
+              <view class="pcard-top">
+                <text class="pcard-name">{{item.display_name}}</text>
+                <view class="pcard-num"><text class="pcard-stars" tt:if="{{item.star_text}}">{{item.star_text}}</text><text>{{item.display_lit}}/{{item.display_total}}</text></view>
+              </view>
+              <view class="swatches">
+                <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+                  <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+                  <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+                  <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+                  <view class="swatch-q" tt:else>?</view>
+                </view>
+              </view>
+                <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+            </view>
+          </view>
+        </view>
+        <view class="progress-section">
+          <view class="progress-head"><text>已集齐的产品</text><text class="progress-head-count">{{completed.products.length}} 个</text></view>
+          <view class="my-grid" tt:if="{{completed.products.length > 0}}">
+            <view class="pcard complete" tt:for="{{completed.products}}" tt:key="id" data-id="{{item.id}}" data-brand="{{item.brand_id}}" data-ready="{{item.has_ready_flavor ? 1 : 0}}" bindtap="openProgressProduct">
+              <view class="pcard-top">
+                <text class="pcard-name">{{item.display_name}}</text>
+                <view class="pcard-num"><text class="pcard-stars" tt:if="{{item.star_text}}">{{item.star_text}}</text><text>{{item.display_lit}}/{{item.display_total}}</text></view>
+              </view>
+              <view class="pcard-brand-tag">{{item.brand_name}}</view>
+              <view class="swatches">
+                <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+                  <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+                  <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+                  <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+                  <view class="swatch-q" tt:else>?</view>
+                </view>
+              </view>
+                <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+            </view>
+          </view>
+        </view>
+      </block>
+      <block tt:else>
+        <view class="progress-section">
+          <view class="progress-head"><text>已集齐的品牌</text><text class="progress-head-count">0 个</text></view>
+          <view class="done-empty-brand">
+            <text class="done-empty-zero">0</text>
+            <text class="done-empty-title">还没有集齐任何品牌，继续收集吧</text>
+            <text class="done-empty-sub">先挑一个快收满的品牌，收满它就会出现在这里</text>
+          </view>
+        </view>
+        <view class="progress-section">
+          <view class="progress-head"><text>已集齐的产品</text><text class="progress-head-count">0 个</text></view>
+          <view class="done-empty-product">还没有集齐任何产品</view>
+        </view>
+      </block>
+    </block>
+
+    <view class="catalog-empty" tt:if="{{tab === 'brand' && brands.length === 0}}">还没有可收集的品牌</view>
+    <view class="catalog-empty" tt:if="{{tab === 'product' && products.length === 0}}">还没有可收集的产品</view>
+  </block>
+</view>

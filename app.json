@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/list/list",
+    "pages/detail/detail",
+    "pages/claim/claim",
+    "pages/catalog/index",
+    "pages/catalog/brand",
+    "pages/catalog/flavors",
+    "pages/flavor-receipts/flavor-receipts"
+  ],
+  "window": {
+    "navigationStyle": "default",
+    "navigationBarBackgroundColor": "#FBF7EE",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "PeacePet · 电子小票",
+    "backgroundTextStyle": "dark",
+    "backgroundColor": "#FBF7EE",
+    "enablePullDownRefresh": false
+  }
+}

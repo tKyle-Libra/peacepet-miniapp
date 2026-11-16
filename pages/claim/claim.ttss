@@ -1,0 +1,41 @@
+.claimpage { min-height: 100vh; }
+.bindcard {
+  background: #FFFDF7;
+  border: 2.5px solid #111;
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 #111;
+  margin: 18px 12px;
+  padding: 18px 15px 16px;
+}
+.big { font-size: 22px; font-weight: 900; letter-spacing: -.4px; }
+.desc { font-size: 11.5px; color: #6F665C; line-height: 1.6; margin: 5px 0 14px; }
+.field { font-size: 11px; font-weight: 800; color: #6F665C; margin: 13px 0 5px; }
+.datebox, .tailinput {
+  width: 100%;
+  height: 88rpx;
+  min-height: 88rpx;
+  line-height: 88rpx;
+  border: 2.5px solid #111;
+  border-radius: 8rpx;
+  background: #fff;
+  padding: 0 22rpx;
+  font-size: 30rpx;
+  font-weight: 800;
+  box-sizing: border-box;
+}
+.datebox {
+  display: flex;
+  align-items: center;
+}
+.tailinput {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2rpx;
+}
+.tailplaceholder {
+  color: #9A9084;
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+}
+.datebox:active { box-shadow: 3rpx 3rpx 0 #FFE600; }
+.notes { margin-top: 18px; font-size: 10.5px; color: #6F665C; line-height: 1.8; }

@@ -1,0 +1,140 @@
+<view class="page listpage">
+  <view class="list-top">
+    <image class="avatar-sm" tt:if="{{avatarUrl}}" src="{{avatarUrl}}" mode="aspectFill"></image>
+    <text class="nickname" tt:if="{{nickname}}">{{nickname}}</text>
+    <view class="level-badge" tt:if="{{level}}" bindtap="openLevel">
+      Lv.{{level.level_index}} {{level.level_name}}<text class="level-star" tt:if="{{level.level_index === 12}}">★</text>
+    </view>
+        <view class="rule-hit" bindtap="openRule">
+      <view class="rule-circle">?</view>
+    </view>
+  </view>
+
+  <view class="level-progress" tt:if="{{level}}">
+    <view class="level-track"><view class="level-fill" style="width: {{level.progress_pct}}%;"></view></view>
+    <text class="level-pct">{{level.progress_pct}}%</text>
+  </view>
+
+  <!-- 三格汇总条：图鉴已上线，当前展示 -->
+  <view class="summary-bar" tt:if="{{showSummary && !loading && !error}}">
+    <view class="summary-cell">
+      <view class="summary-num">{{summaryCounts.receipts}}</view>
+      <view class="summary-label">张小票</view>
+    </view>
+    <view class="summary-sep"></view>
+    <view class="summary-cell summary-cell-skus {{summaryPressed ? 'summary-cell-press' : ''}}"
+          bindtap="goCatalog" bindtouchstart="pressSummary" bindtouchend="releaseSummary"
+          hover-class="summary-cell-press" aria-role="button"
+          aria-label="查看图鉴，已集齐{{summaryCounts.skus}}种商品">
+      <view class="summary-num">{{summaryCounts.skus}}</view>
+      <view class="summary-label">种商品已集齐</view>
+      <text class="summary-cell-arrow">›</text>
+    </view>
+    <view class="summary-sep"></view>
+    <view class="summary-cell">
+      <view class="summary-num">{{summaryCounts.points}}</view>
+      <view class="summary-label">积分</view>
+    </view>
+  </view>
+
+  <view class="member-hint" tt:if="{{showSummary && !loading && !error && summaryCounts.points === 0}}" bindtap="openMemberHint">
+    还没开通会员，去直播间开卡就能攒积分
+  </view>
+
+  <!-- 只有已有记录时才显示顶部认领按钮；空列表只保留空状态里的按钮，避免两个按钮同时出现 -->
+  <view class="claimbar" tt:if="{{!loading && !error && receipts.length > 0}}">
+    <button class="btn primary" bindtap="goClaim">＋ 认领一张小票</button>
+  </view>
+
+  <view class="loading" tt:if="{{loading}}">加载中…</view>
+  <view class="errbox" tt:if="{{error}}">
+    <view class="err">{{error}}</view>
+    <button class="btn" bindtap="retry">重试</button>
+  </view>
+
+  <view class="empty" tt:if="{{!loading && !error && receipts.length === 0}}">
+    <view class="empty-icon">🧾</view>
+    <view class="empty-title">还没有记录</view>
+    <view class="empty-desc">买完后用小票号认领一张，<br/>就会出现在这里。</view>
+    <button class="btn primary empty-btn" bindtap="goClaim">去认领第一张</button>
+  </view>
+
+  <view class="rule-mask" tt:if="{{showRule}}">
+    <view class="rule-dialog">
+      <view class="rule-title">认领规则</view>
+      <view class="rule-block">
+        <view class="rule-h">一、哪些消费会出现在这里</view>
+        <view class="rule-p">只显示你认领过的小票，以及绑定会员之后的消费</view>
+      </view>
+      <view class="rule-block">
+        <view class="rule-h">二、会员怎么算</view>
+        <view class="rule-p">认领一张会员单，就完成了会员绑定；之后用同一个会员结账的消费，会自动出现在这里</view>
+      </view>
+      <view class="rule-block">
+        <view class="rule-h">三、为什么早期的看不到</view>
+        <view class="rule-p">绑定之前的消费不会自动显示，需要用那张小票的号手动认领</view>
+      </view>
+      <button class="btn primary rule-btn" bindtap="closeRule">知道了</button>
+    </view>
+  </view>
+
+  <view class="list" tt:if="{{receipts.length > 0}}">
+    <view class="ord" tt:for="{{receipts}}" tt:key="id" data-id="{{item.id}}" bindtap="openReceipt">
+      <view class="ord-top">
+        <text class="tag {{item.is_refund ? 'refund' : 'member'}}" tt:if="{{item.is_refund}}">退款</text>
+        <text class="tag member" tt:elif="{{item.member_linked}}">会员单</text>
+        <text class="ord-date">{{item.date_text}} {{item.time}}</text>
+        <text class="ord-no">No.{{item.order_tail}}</text>
+      </view>
+      <view class="ord-mid">{{item.item_summary}}</view>
+      <view class="ord-bot">
+        <text class="store">PeacePet · 共 {{item.item_count}} 件</text>
+      </view>
+    </view>
+    <view class="more" tt:if="{{hasMore}}">上拉加载更多</view>
+    <view class="more" tt:elif="{{receipts.length > 0}}">仅展示已认领 / 绑定后的消费</view>
+  </view>
+
+  <view class="rule-mask" tt:if="{{showMemberHint}}">
+    <view class="rule-dialog">
+      <view class="rule-title">开通会员</view>
+      <view class="rule-p">在 PeacePet 直播间下单时告诉主播开通会员，之后每次消费都能累计积分，也能在这里看到自己的积分。</view>
+      <button class="btn primary rule-btn" bindtap="closeMemberHint">知道了</button>
+    </view>
+  </view>
+
+  <view class="rule-mask" tt:if="{{showLevel}}">
+    <view class="rule-dialog level-dialog">
+      <view class="rule-title">等级说明</view>
+      <view class="level-current-card">
+        <view class="level-current-badge">
+          <view class="level-badge">
+            Lv.{{level.level_index}} {{level.level_name}}<text class="level-star" tt:if="{{level.level_index === 12}}">★</text>
+          </view>
+          <text class="level-current-label">当前等级</text>
+          <text class="level-members-current">{{levelMembers}} 人达成</text>
+        </view>
+        <view class="level-current-progress">
+          <view class="level-track"><view class="level-fill" style="width: {{level.progress_pct}}%;"></view></view>
+          <text class="level-pct">{{level.progress_pct}}%</text>
+        </view>
+        <view class="level-gap">{{level.level_index === 12 ? '已达成最高等级' : '距下一级还差 ' + levelGap + '%'}}</view>
+      </view>
+      <scroll-view class="level-road-scroll" scroll-y="true" scroll-into-view="{{levelScrollInto}}" scroll-with-animation="true">
+        <view id="lv-{{item.index}}" class="level-road-row {{item.index <= level.level_index ? 'achieved' : 'unachieved'}} {{item.index === level.level_index ? 'current' : ''}}" tt:for="{{levelRows}}" tt:key="index">
+          <view class="level-dot-wrap">
+            <view class="level-line" tt:if="{{item.index > 1 && item.index <= level.level_index}}"></view>
+            <view class="level-dot"></view>
+          </view>
+          <text class="level-row-idx">{{item.pad}}</text>
+          <text class="level-row-name">{{item.name}}</text>
+          <view class="level-row-meta" tt:if="{{item.achieved_at}}">
+            <text class="level-row-date">{{item.achieved_at}}</text>
+          </view>
+          <text class="level-current-tag" tt:if="{{item.index === level.level_index}}">当前</text>
+        </view>
+      </scroll-view>
+      <button class="btn primary rule-btn" bindtap="closeLevel">知道了</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,77 @@
+<view class="flavors-page">
+  <scroll-view class="flavors-scroll" scroll-y="true">
+  <view class="loading" tt:if="{{loading}}">加载中…</view>
+  <view class="errbox" tt:if="{{error}}">
+    <view class="err">{{error}}</view>
+    <button class="btn" bindtap="retry">重试</button>
+  </view>
+
+  <block tt:if="{{!loading && !error && product}}">
+    <view class="wall-hero {{product.is_complete ? 'complete' : ''}}">
+      <view class="wall-title">{{product.display_name}}</view>
+      <view class="wall-stats">
+        <text>已点亮 {{product.lit_count}}/{{product.flavor_count}}</text>
+        <text class="wall-completed">{{product.completed_members || 0}} 人集齐</text>
+      </view>
+      <view class="segments">
+        <view class="seg" tt:for="{{product.segments}}" tt:key="index" style="background: {{item.display_color}};"></view>
+      </view>
+      <view class="wall-state-row" tt:if="{{product.is_complete || product.lit_count === 0}}">
+        <text class="state-tag complete" tt:if="{{product.is_complete}}">★ 已集齐</text>
+        <text class="state-tag unstarted" tt:else>未开始</text>
+      </view>
+    </view>
+
+    <view class="flavor-grid">
+      <view class="flavor-cell" tt:for="{{product.flavors}}" tt:key="id" data-id="{{item.id}}" data-ready="{{item.is_flavor_ready ? 1 : 0}}" bindtap="openFlavor">
+        <view class="flavor-tile {{item.display_lit ? 'lit' : 'unlit'}}" style="background: {{item.display_lit ? item.display_color : '#E6DFD0'}};">
+          <image class="flavor-icon" tt:if="{{item.display_lit && !iconErrors[item.id]}}" src="{{item.icon_url}}" mode="aspectFit" data-id="{{item.id}}" binderror="onIconError"></image>
+          <text class="flavor-fallback" tt:if="{{item.display_lit && iconErrors[item.id]}}">🐾</text>
+          <text class="flavor-check" tt:if="{{item.display_lit}}">✓</text>
+          <text class="flavor-question" tt:else>?</text>
+        </view>
+        <view class="flavor-name {{item.display_lit ? 'on' : ''}}">{{item.name}}</view>
+      </view>
+    </view>
+    <view class="wall-empty" tt:if="{{product.flavors.length === 0}}">这个产品还没有已映射的口味</view>
+  </block>
+  </scroll-view>
+
+  <view class="unready-layer" tt:if="{{showUnready}}">
+    <view class="unready-card" catchtap="noop">
+      <view class="unready-title">这个口味还没开放</view>
+      <view class="unready-text">店里还没把这个商品归类到具体口味</view>
+      <view class="unready-text">想要的话可以跟店员说一声，让他们补上</view>
+      <button class="btn primary unready-btn" bindtap="closeUnready">知道了</button>
+    </view>
+  </view>
+
+  <view class="sheet-mask" tt:if="{{showSheet}}" bindtap="closeSheet">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-loading" tt:if="{{sheetLoading}}">加载中…</view>
+      <block tt:if="{{sheet}}">
+        <view class="sheet-head">
+          <view class="sheet-color {{sheet.lit ? 'lit' : 'unlit'}}" style="background: {{sheet.lit ? sheet.display_color : '#E6DFD0'}};">
+            <image class="sheet-icon" tt:if="{{sheet.lit && !sheetIconError}}" src="{{sheet.icon_url}}" mode="aspectFit" binderror="onSheetIconError"></image>
+            <text class="sheet-fallback" tt:if="{{sheet.lit && sheetIconError}}">🐾</text>
+            <text class="sheet-check" tt:if="{{sheet.lit}}">✓</text>
+            <text class="flavor-question" tt:else>?</text>
+          </view>
+          <view class="sheet-heading">
+            <view class="sheet-name">{{sheet.name}}</view>
+            <view class="sheet-sub">{{sheet.brand_name}} · {{sheet.display_product_name}}</view>
+            <view class="sheet-state {{sheet.lit ? 'on' : ''}}">{{sheet.lit ? '已点亮' : '未点亮'}}</view>
+          </view>
+        </view>
+        <view class="sheet-rows">
+          <view class="sheet-row"><text>买过次数</text><text class="sheet-row-val">{{sheet.my_buy_count}} 次</text></view>
+          <view class="sheet-row"><text>最后一次</text><text class="sheet-row-val">{{sheet.last_text}}</text></view>
+        </view>
+        <view class="sheet-social"><text class="sheet-social-dot"></text>{{sheet.social_text}}</view>
+        <button class="btn primary receipt-btn" tt:if="{{sheet.lit}}" bindtap="openReceipts">查看相关小票（{{sheet.my_buy_count}} 张）</button>
+        <view class="sheet-locked" tt:else>点亮后，这里会显示你的相关小票</view>
+      </block>
+    </view>
+  </view>
+</view>

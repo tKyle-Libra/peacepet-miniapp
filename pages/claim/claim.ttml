@@ -1,0 +1,24 @@
+<view class="page claimpage">
+  <view class="bindcard">
+    <view class="big">认领一张小票</view>
+    <view class="desc">输入小票上的日期和后 6 位，认领后这张小票会归到你名下。</view>
+
+    <view class="field">购买日期</view>
+    <picker mode="date" value="{{date}}" bindchange="onDate">
+      <view class="datebox">{{date || '请选择日期'}}</view>
+    </picker>
+
+    <view class="field">小票号后 6 位</view>
+    <input class="tailinput" type="number" maxlength="6" placeholder="例如 000612"
+           placeholder-class="tailplaceholder" value="{{last6}}" bindinput="onTail" />
+
+    <view class="err">{{error}}</view>
+    <button class="btn primary" bindtap="submit" disabled="{{submitting}}">{{submitting ? '认领中…' : '认领这张小票'}}</button>
+
+    <view class="notes">
+      <view>· 会员单认领后自动绑定会员</view>
+      <view>· 绑定之前的更早消费不会显示</view>
+      <view>· 一张小票只能被一个人认领</view>
+    </view>
+  </view>
+</view>

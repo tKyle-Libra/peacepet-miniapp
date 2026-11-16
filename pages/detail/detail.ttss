@@ -1,0 +1,159 @@
+.ticket-wrap { padding: 14px 12px 34px; }
+.banner {
+  background: #FFD9D6;
+  border: 2.5px solid #D9302C;
+  border-radius: 10px;
+  padding: 8px 11px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #D9302C;
+  margin-bottom: 10px;
+}
+.ticket {
+  background: #FFFDF7;
+  border: 2.5px solid #111;
+  border-radius: 14px;
+  box-shadow: 5px 5px 0 #111;
+  overflow: hidden;
+}
+.ticket-head {
+  background: #FFE600;
+  padding: 15px;
+  border-bottom: 2.5px dashed rgba(17,17,17,.35);
+}
+.shop { font-size: 24px; font-weight: 900; letter-spacing: -.5px; }
+.shop-sub { font-size: 10.5px; margin-top: 3px; }
+.ticket-meta { padding: 12px 15px 4px; }
+.mrow { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; padding: 8px 0; color: #6F665C; }
+.mval { color: #111; font-weight: 800; text-align: right; }
+.member-val { display: flex; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0; }
+.member-val .mval { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member-row { align-items: center; }
+.level-badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 7px;
+  box-sizing: border-box;
+  background: #FFE600;
+  border: 2.5px solid #111;
+  border-radius: 7px;
+  box-shadow: 2.5px 2.5px 0 #111;
+  font-size: 12.5px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  color: #111;
+}
+.level-star { margin-left: 3px; font-size: 12px; }
+.red { color: #D9302C !important; }
+.dash { border-top: 2px dashed rgba(17,17,17,.3); margin: 9px 15px; }
+.items { padding: 0 15px; }
+.item { padding: 8px 0; border-bottom: 1px solid rgba(17,17,17,.08); }
+.item:last-child { border-bottom: 0; }
+.item-top { display: flex; justify-content: space-between; gap: 10px; }
+.item-name { font-size: 12px; font-weight: 800; line-height: 1.35; flex: 1; min-width: 0; }
+.item-qty { flex: none; padding-top: 1px; font-size: 10.5px; font-weight: 700; line-height: 1.4; color: #6F665C; white-space: nowrap; }
+.item-amount { font-size: 13px; font-weight: 900; white-space: nowrap; }
+.item-sub { font-size: 10px; color: #6F665C; margin-top: 3px; }
+.item-line { display: flex; justify-content: space-between; font-size: 10.5px; color: #6F665C; margin-top: 3px; }
+.totals { padding: 0 15px; }
+.trow { display: flex; justify-content: space-between; font-size: 12px; color: #6F665C; padding: 4px 0; }
+.trow.main { font-size: 22px; font-weight: 900; color: #111; padding-top: 8px; }
+.foot { padding: 16px 15px 20px; text-align: center; font-size: 9.5px; color: #6F665C; line-height: 1.6; }
+.loading { text-align: center; padding: 30px 0; font-size: 12px; color: #6F665C; }
+.errbox { margin: 18px 16px; }
+
+
+/* 等级说明弹窗：复用认领规则弹窗的米色/黑边/黄按钮 */
+.rule-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(17,17,17,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+}
+.rule-dialog {
+  width: 100%;
+  max-width: 360px;
+  background: #FBF7EE;
+  border: 3px solid #111;
+  border-radius: 14px;
+  box-shadow: 6px 6px 0 #111;
+  padding: 18px 16px 16px;
+  box-sizing: border-box;
+}
+.rule-title { font-size: 22px; font-weight: 900; margin-bottom: 12px; }
+.rule-btn { margin-top: 14px; }
+.level-dialog { max-height: 86vh; display: flex; flex-direction: column; }
+.level-current-card {
+  flex: none;
+  padding: 10px 10px 9px;
+  background: #FFF3A8;
+  border: 2px solid #111;
+  border-radius: 8px;
+}
+.level-current-badge { display: flex; align-items: center; gap: 9px; }
+.level-members-current { margin-left: auto; flex: none; font-size: 9.5px; font-weight: 700; color: #8A8175; white-space: nowrap; }
+.level-current-label { font-size: 11px; font-weight: 800; color: #6F665C; }
+.level-current-progress { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.level-gap { display: block; margin-top: 7px; font-size: 11px; color: #6F665C; }
+.level-members { font-size: 10px; font-weight: 700; color: #8A8175; }
+.level-road-scroll {
+  height: 282px;
+  margin-top: 12px;
+  padding-top: 6px;
+  border-top: 2px dashed rgba(17,17,17,.22);
+  box-sizing: border-box;
+}
+.level-road-row { display: flex; align-items: center; gap: 9px; height: 42px; padding: 0 8px; border-radius: 6px; }
+.level-road-row.current { background: #FFF3A8; }
+.level-dot-wrap {
+  position: relative;
+  width: 10px;
+  height: 42px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.level-dot {
+  position: relative;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border: 2px dashed #B9B3A8;
+  border-radius: 50%;
+  background: #fff;
+  box-sizing: border-box;
+}
+.level-line {
+  position: absolute;
+  z-index: 0;
+  left: 50%;
+  top: -21px;
+  width: 2.5px;
+  height: 42px;
+  background: #111;
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+.level-road-row.achieved .level-dot { border: 2px solid #111; background: #FFE600; }
+.level-road-row.unachieved .level-row-idx,
+.level-road-row.unachieved .level-row-name { color: #8A8175; }
+.level-road-row.current .level-row-idx,
+.level-road-row.current .level-row-name { color: #9A7200; }
+.level-row-idx { width: 22px; flex: none; font-size: 11px; font-weight: 800; color: #111; }
+.level-row-name { flex: 1; font-size: 12.5px; font-weight: 800; color: #111; }
+.level-row-meta { flex: none; display: flex; align-items: baseline; gap: 3px; margin-left: 8px; font-size: 9px; font-weight: 700; color: #8A8175; white-space: nowrap; }
+.level-row-date { font-size: 9px; font-weight: 700; color: #8A8175; white-space: nowrap; }
+.level-row-sep { color: #8A8175; }
+.level-row-members { font-size: 9px; font-weight: 700; color: #8A8175; white-space: nowrap; }
+.level-current-tag { flex: none; padding: 2px 6px; background: #FFE600; border: 1.5px solid #111; border-radius: 4px; font-size: 10px; font-weight: 900; }
+.level-dialog .rule-btn { flex: none; }

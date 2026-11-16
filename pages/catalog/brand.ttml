@@ -1,0 +1,50 @@
+<view class="brand-page">
+  <view class="loading" tt:if="{{loading}}">加载中…</view>
+  <view class="errbox" tt:if="{{error}}">
+    <view class="err">{{error}}</view>
+    <button class="btn" bindtap="retry">重试</button>
+  </view>
+
+  <block tt:if="{{!loading && !error && brand}}">
+    <view class="brand-hero">
+      <view class="brand-title">{{brand.name}}</view>
+      <view class="brand-stats">
+        <text>已收集 {{brand.lit_cells}}/{{brand.total_cells}}</text>
+        <text class="brand-pct">{{brand.progress_pct}}%</text>
+      </view>
+      <view class="cat-bar">
+        <view class="cat-bar-fill" style="width: {{brand.progress_pct}}%;"></view>
+      </view>
+      <view class="brand-social">{{brand.member_text}}</view>
+    </view>
+
+    <view class="sort-row">
+      <view class="sort-chip {{sort === item.key ? 'active' : ''}}" tt:for="{{chips}}" tt:key="key" data-sort="{{item.key}}" bindtap="setSort">{{item.label}}</view>
+    </view>
+
+    <view class="product-grid">
+      <view id="product-{{item.id}}" class="pcard {{item.is_complete ? 'complete' : ''}}" tt:for="{{products}}" tt:key="id" data-id="{{item.id}}" data-ready="{{item.has_ready_flavor ? 1 : 0}}" bindtap="productTap">
+        <view class="pcard-row">
+          <text class="pcard-name">{{item.display_name}}</text>
+          <view class="pcard-num {{item.lit_count === 0 ? 'zero' : ''}}">
+            <text class="pcard-stars" tt:if="{{item.star_text}}">{{item.star_text}}</text>
+            <text>{{item.lit_count}}/{{item.flavor_count}}</text>
+          </view>
+        </view>
+        <view class="pcard-brand-tag">{{item.brand_name}}</view>
+          <view class="pcard-segments"><view class="pcard-seg {{item.display_segments.length > 12 ? 'dense' : ''}}" tt:for="{{item.display_segments}}" tt:key="index" style="background: {{item.display_color}};"></view></view>
+        <view class="swatches">
+          <view class="swatch is-20" tt:for="{{item.preview_flavors}}" tt:for-item="f" tt:for-index="idx" tt:key="flavor_id" style="background: {{f.display_lit ? f.color : '#EDE7DF'}};">
+            <image class="swatch-icon" tt:if="{{f.display_lit && !iconErrors[f.flavor_id]}}" src="{{f.icon_url}}" mode="aspectFit" data-id="{{f.flavor_id}}" binderror="onIconError"></image>
+            <text class="swatch-fallback" tt:if="{{f.display_lit && iconErrors[f.flavor_id]}}">🐾</text>
+            <text class="swatch-check" tt:if="{{f.display_lit}}">✓</text>
+            <view class="swatch-q" tt:else>?</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="product-count-note">共 {{products.length}} 个产品 · 点产品看口味墙</view>
+
+    <view class="brand-empty" tt:if="{{products.length === 0}}">这个品牌还没有已映射的口味</view>
+  </block>
+</view>

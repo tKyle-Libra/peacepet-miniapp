@@ -1,0 +1,82 @@
+<view class="page">
+  <view class="loading" tt:if="{{loading}}">加载中…</view>
+  <view class="errbox" tt:if="{{error}}">
+    <view class="err">{{error}}</view>
+    <button class="btn" bindtap="load">重试</button>
+  </view>
+
+  <view class="ticket-wrap" tt:if="{{receipt}}">
+    <view class="banner" tt:if="{{receipt.is_refund}}">退款单</view>
+    <view class="ticket">
+      <view class="ticket-head">
+        <view class="shop">PeacePet</view>
+        <view class="shop-sub">电子小票</view>
+      </view>
+      <view class="ticket-meta">
+        <view class="mrow"><text>购买时间</text><text class="mval">{{receipt.date_text}} {{receipt.time}}</text></view>
+        <view class="mrow"><text>小票号</text><text class="mval">{{receipt.order_tail}}</text></view>
+        <view class="mrow"><text>单类型</text><text class="mval {{receipt.is_refund ? 'red' : ''}}">{{receipt.is_refund ? '退款' : '正常购买'}}</text></view>
+        <view class="mrow member-row" tt:if="{{receipt.member_name}}">
+          <text>会员</text>
+          <view class="member-val">
+            <text class="mval">{{receipt.member_name}}</text>
+            <view class="level-badge" tt:if="{{level}}" bindtap="openLevel">
+              Lv.{{level.level_index}} {{level.level_name}}<text class="level-star" tt:if="{{level.level_index === 12}}">★</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="dash"></view>
+      <view class="items">
+        <view class="item" tt:for="{{items}}" tt:key="name">
+          <view class="item-top">
+            <text class="item-name">{{item.name}}</text>
+            <text class="item-qty">数量 {{item.qty}} 件</text>
+          </view>
+          <view class="item-sub" tt:if="{{item.meta}}">{{item.meta}}</view>
+        </view>
+      </view>
+
+      <view class="foot">
+        PeacePet · 店号 {{receipt.store_no}}<br/>
+        如对小票有疑问，请联系门店
+      </view>
+    </view>
+  </view>
+
+  <view class="rule-mask" tt:if="{{showLevel}}">
+    <view class="rule-dialog level-dialog">
+      <view class="rule-title">等级说明</view>
+      <view class="level-current-card">
+        <view class="level-current-badge">
+          <view class="level-badge">
+            Lv.{{level.level_index}} {{level.level_name}}<text class="level-star" tt:if="{{level.level_index === 12}}">★</text>
+          </view>
+          <text class="level-current-label">当前等级</text>
+          <text class="level-members-current">{{levelMembers}} 人达成</text>
+        </view>
+        <view class="level-current-progress">
+          <view class="level-track"><view class="level-fill" style="width: {{level.progress_pct}}%;"></view></view>
+          <text class="level-pct">{{level.progress_pct}}%</text>
+        </view>
+        <view class="level-gap">{{level.level_index === 12 ? '已达成最高等级' : '距下一级还差 ' + levelGap + '%'}}</view>
+      </view>
+      <scroll-view class="level-road-scroll" scroll-y="true" scroll-into-view="{{levelScrollInto}}" scroll-with-animation="true">
+        <view id="lv-{{item.index}}" class="level-road-row {{item.index <= level.level_index ? 'achieved' : 'unachieved'}} {{item.index === level.level_index ? 'current' : ''}}" tt:for="{{levelRows}}" tt:key="index">
+          <view class="level-dot-wrap">
+            <view class="level-line" tt:if="{{item.index > 1 && item.index <= level.level_index}}"></view>
+            <view class="level-dot"></view>
+          </view>
+          <text class="level-row-idx">{{item.pad}}</text>
+          <text class="level-row-name">{{item.name}}</text>
+          <view class="level-row-meta" tt:if="{{item.achieved_at}}">
+            <text class="level-row-date">{{item.achieved_at}}</text>
+          </view>
+          <text class="level-current-tag" tt:if="{{item.index === level.level_index}}">当前</text>
+        </view>
+      </scroll-view>
+      <button class="btn primary rule-btn" bindtap="closeLevel">知道了</button>
+    </view>
+  </view>
+</view>

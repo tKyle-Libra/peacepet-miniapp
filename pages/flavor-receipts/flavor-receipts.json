@@ -1,0 +1,6 @@
+{
+  "navigationStyle": "default",
+  "navigationBarTitleText": "相关小票",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

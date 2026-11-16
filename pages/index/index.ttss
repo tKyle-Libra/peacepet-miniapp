@@ -1,0 +1,71 @@
+.loginpage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 28px;
+  box-sizing: border-box;
+}
+.login-top {
+  padding-top: 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.mark {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  background: #FFE600;
+  border: 3px solid #111;
+  border-radius: 12px;
+  box-shadow: 6px 6px 0 #111;
+  padding: 8px 15px;
+}
+.brandline {
+  margin-top: 18rpx;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+.login-mid {
+  margin-top: 18vh;
+}
+.login-title {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.25;
+  letter-spacing: -.5px;
+}
+.login-desc {
+  margin-top: 14rpx;
+  font-size: 12px;
+  color: #6F665C;
+  line-height: 1.7;
+}
+.login-checking {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #6F665C;
+}
+.login-bottom {
+  margin-top: auto;
+  padding-bottom: calc(34rpx + env(safe-area-inset-bottom));
+}
+.login-error {
+  margin-bottom: 8rpx;
+  min-height: 18rpx;
+}
+.login-btn {
+  width: 100%;
+  font-size: 30rpx;
+}
+.login-foot {
+  margin-top: 18rpx;
+  text-align: center;
+  font-size: 10px;
+  color: #6F665C;
+  letter-spacing: .5px;
+}
