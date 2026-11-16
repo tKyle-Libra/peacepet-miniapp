@@ -3,6 +3,8 @@ const api = require('./utils/api');
 const SESSION_KEY = 'peacepet_receipt_session';
 const DEVICE_KEY = 'peacepet_receipt_device_id';
 
+const APP_VERSION = '1.0.0';
+
 App({
   globalData: {
     token: '',
