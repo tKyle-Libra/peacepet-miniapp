@@ -1,4 +1,5 @@
 const api = require('./utils/api');
+const track = require('./utils/track');
 
 const SESSION_KEY = 'peacepet_receipt_session';
 const DEVICE_KEY = 'peacepet_receipt_device_id';
@@ -8,12 +9,22 @@ const APP_VERSION = '1.0.0';
 App({
   globalData: {
     token: '',
-    expiresAt: 0
+    expiresAt: 0,
+    userId: 0
   },
 
   onLaunch() {
+    track.init();
     // 不自动登录；只恢复本地登录态。首次进入由登录页决定。
     this.restoreSession();
+  },
+
+  onShow() {
+    track.appShow();
+  },
+
+  onHide() {
+    track.appHide();
   },
 
   restoreSession() {
@@ -43,6 +54,7 @@ App({
   clearSession() {
     this.globalData.token = '';
     this.globalData.expiresAt = 0;
+    this.globalData.userId = 0;
     try { tt.removeStorageSync(SESSION_KEY); } catch (e) {}
   },
 

@@ -1,0 +1,8 @@
+{
+  "navigationStyle": "custom",
+  "backgroundColor": "#FBF7EE",
+  "disableScroll": true,
+  "navigationBarTitleText": "PEACEPET 图鉴",
+  "navigationBarBackgroundColor": "#FBF7EE",
+  "navigationBarTextStyle": "black"
+}

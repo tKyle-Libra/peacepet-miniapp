@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 const palette = require('../../utils/color');
 const { iconFor } = require('../../utils/flavor_icon');
 const { roundsText } = require('../../utils/rounds');
@@ -25,6 +26,14 @@ Page({
     this.pet = (options && (options.pet === 'cat' || options.pet === 'dog')) ? options.pet : '';
     this.load();
   },
+
+  onShow() {
+    track.pageShow('brand', { target: this.brandId || '' });
+  },
+
+  onHide() { track.flush(); },
+
+  onUnload() { track.flush(); },
 
   load() {
     if (!this.brandId) {
@@ -138,6 +147,8 @@ Page({
     const ds = e.currentTarget.dataset || {};
     const id = ds.id;
     if (!id || !this.brandId) return;
+    track.event('product_click', { page: 'brand', target: String(id),
+      props: { brand_id: this.brandId, source: 'brand', status: (String(ds.ready) === '1' ? 'ready' : 'unready') } });
     if (String(ds.ready) === '0' || ds.ready === 0 || ds.ready === false) {
       tt.showToast({ title: '口味暂未开放，快让 PP 去补全口味吧', icon: 'none', duration: 2600 });
       return;

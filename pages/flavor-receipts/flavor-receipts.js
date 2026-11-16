@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 const { decorateReceipt } = require('../../utils/receipts');
 
 Page({
@@ -29,6 +30,14 @@ Page({
     }
     this.load(1);
   },
+
+  onShow() {
+    track.pageShow('flavor_receipts', { target: this.flavorId || '' });
+  },
+
+  onHide() { track.flush(); },
+
+  onUnload() { track.flush(); },
 
   load(page) {
     if (this.data.loading && page > 1) return Promise.resolve();
@@ -63,6 +72,9 @@ Page({
 
   openReceipt(e) {
     const id = e.currentTarget.dataset.id;
-    if (id) tt.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    if (id) {
+      track.event('receipt_click', { page: 'flavor_receipts', target: String(id), props: { flavor_id: this.flavorId } });
+      tt.navigateTo({ url: '/pages/detail/detail?id=' + id });
+    }
   }
 });

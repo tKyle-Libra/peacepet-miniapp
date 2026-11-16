@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 
 Page({
   data: {
@@ -16,6 +17,14 @@ Page({
     const day = String(d.getDate()).padStart(2, '0');
     this.setData({ date: y + '-' + m + '-' + day });
   },
+
+  onShow() {
+    track.pageShow('claim');
+  },
+
+  onHide() { track.flush(); },
+
+  onUnload() { track.flush(); },
 
   graphToast() {
     tt.showToast({ title: '图鉴功能开发中', icon: 'none', duration: 1800 });
@@ -41,12 +50,26 @@ Page({
     if (!date) { this.setData({ error: '请选择购买日期' }); return; }
     if (!/^\d{6}$/.test(last6)) { this.setData({ error: '请输入小票后 6 位数字' }); return; }
     this.setData({ submitting: true, error: '', hint: '' });
+    track.event('claim_submit', { page: 'claim', props: { source: 'claim_page' } });
     api.claimReceipt(date, last6).then((body) => {
       const d = (body && body.data) || {};
       const result = d.result;
       if (result === 'OK') {
+        track.event('claim_success', { page: 'claim', props: { result: 'OK' } });
+        track.flush();
         tt.showToast({ title: '认领成功', icon: 'success' });
-        setTimeout(() => tt.reLaunch({ url: '/pages/list/list' }), 700);
+        setTimeout(() => {
+          api.getPackPending().then((pack) => {
+            const pd = (pack && pack.data) || {};
+            if (pd.has_pack) {
+              track.event('pack_trigger', { page: 'claim', props: { source: 'claim', count: (pd.cards || []).length } });
+              track.flush();
+              tt.navigateTo({ url: '/pages/open-pack/open-pack' });
+            } else {
+              tt.reLaunch({ url: '/pages/list/list' });
+            }
+          }).catch(() => tt.reLaunch({ url: '/pages/list/list' }));
+        }, 700);
       } else if (result === 'ALREADY_CLAIMED_SELF') {
         tt.showToast({ title: '这张小票你已经认领过了', icon: 'none' });
         this.setData({ submitting: false });

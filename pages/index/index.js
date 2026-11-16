@@ -1,3 +1,5 @@
+const track = require('../../utils/track');
+
 Page({
   data: {
     checking: true,
@@ -15,8 +17,13 @@ Page({
   },
 
   onShow() {
+    track.pageShow('login');
     if (!this.data.loggingIn) this.checkSession();
   },
+
+  onHide() { track.flush(); },
+
+  onUnload() { track.flush(); },
 
   checkSession() {
     const app = getApp();
@@ -49,6 +56,8 @@ Page({
     this._loginStarted = true;
     this.setData({ loggingIn: true, error: '' });
     getApp().login({ nickname, avatar_url: avatarUrl }, this.loginCode).then(() => {
+      track.event('login_success', { page: 'login', props: { source: 'douyin' } });
+      track.flush();
       tt.reLaunch({ url: '/pages/list/list' });
     }).catch((err) => {
       this._loginStarted = false;

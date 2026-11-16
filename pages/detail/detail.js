@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 const levels = require('../../utils/level');
 
 Page({
@@ -11,11 +12,17 @@ Page({
     this.load();
   },
 
+  onShow() {
+    track.pageShow('receipt_detail', { target: this.saleId || '' });
+  },
+
   onHide() {
+    track.flush();
     this.setData({ showLevel: false });
   },
 
   onUnload() {
+    track.flush();
     this.setData({ showLevel: false });
   },
 

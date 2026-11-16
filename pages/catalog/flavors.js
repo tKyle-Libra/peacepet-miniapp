@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 const palette = require('../../utils/color');
 const { iconFor } = require('../../utils/flavor_icon');
 const { fmtProductName } = require('../../utils/product_name');
@@ -40,12 +41,18 @@ Page({
     this.setData({ showUnready: false });
   },
 
+  onShow() {
+    track.pageShow('flavors', { target: this.productId || '' });
+  },
+
   onHide() {
+    track.flush();
     // 页面离开时清弹层，避免遮罩/卡片状态残留
     this.setData({ showSheet: false, sheet: null, sheetLoading: false, showUnready: false });
   },
 
   onUnload() {
+    track.flush();
     this.setData({ showSheet: false, sheet: null, sheetLoading: false, showUnready: false });
   },
 
@@ -120,6 +127,8 @@ Page({
     const id = Number(ds.id || 0);
     const ready = String(ds.ready) === '1' || ds.ready === true || ds.ready === 1;
     if (!id) return;
+    track.event('flavor_click', { page: 'flavors', target: String(id),
+      props: { product_id: this.productId, status: ready ? 'ready' : 'unready' } });
     if (!ready) {
       this.setData({ showUnready: true, showSheet: false, sheet: null, sheetLoading: false });
       return;
@@ -127,6 +136,7 @@ Page({
     const local = this.flavorDetails && this.flavorDetails[id];
     if (local) {
       const f = this.prepareSheet(Object.assign({}, local));
+      track.event('flavor_sheet_view', { page: 'flavors', target: String(id) });
       this.setData({ showSheet: true, sheetLoading: false, sheet: f, sheetIconError: false });
       return;
     }
@@ -135,6 +145,7 @@ Page({
       const f = (body && body.data && body.data.flavor) || null;
       if (!f) throw new Error('口味不存在');
       this.prepareSheet(f);
+      track.event('flavor_sheet_view', { page: 'flavors', target: String(id) });
       this.setData({ sheetLoading: false, sheet: f, sheetIconError: false });
     }).catch(() => {
       this.setData({ showSheet: false, sheetLoading: false });
@@ -151,6 +162,7 @@ Page({
   openReceipts() {
     const f = this.data.sheet;
     if (!f || !f.lit || !f.my_buy_count) return;
+    track.event('flavor_receipt_click', { page: 'flavors', target: String(f.id) });
     const name = encodeURIComponent(f.name || '');
     tt.navigateTo({ url: '/pages/flavor-receipts/flavor-receipts?flavor=' + f.id + '&flavor_name=' + name });
   }

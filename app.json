@@ -7,7 +7,8 @@
     "pages/catalog/index",
     "pages/catalog/brand",
     "pages/catalog/flavors",
-    "pages/flavor-receipts/flavor-receipts"
+    "pages/flavor-receipts/flavor-receipts",
+    "pages/open-pack/open-pack"
   ],
   "window": {
     "navigationStyle": "default",

@@ -7,15 +7,23 @@
 
   <block tt:if="{{!loading && !error && brand}}">
     <view class="brand-hero">
-      <view class="brand-title">{{brand.name}}</view>
-      <view class="brand-stats">
-        <text>已收集 {{brand.lit_cells}}/{{brand.total_cells}}</text>
-        <text class="brand-pct">{{brand.progress_pct}}%</text>
+      <view class="brand-copy">
+        <view class="brand-title">{{brand.name}}</view>
+        <view class="brand-stats">
+          <text>已收集 {{brand.lit_cells}}/{{brand.total_cells}}</text>
+          <text class="brand-pct">{{brand.progress_pct}}%</text>
+        </view>
+        <view class="cat-bar">
+          <view class="cat-bar-fill" style="width: {{brand.progress_pct}}%;"></view>
+        </view>
+        <view class="brand-social">{{brand.member_text}}</view>
       </view>
-      <view class="cat-bar">
-        <view class="cat-bar-fill" style="width: {{brand.progress_pct}}%;"></view>
+      <view class="brand-animal-wrap" tt:if="{{brand.animal_key}}">
+        <image class="brand-animal" src="/assets/pets/800/{{brand.animal_key}}.png" mode="aspectFit"></image>
+        <view class="brand-collar" style="background: {{brand.brand_color}};">
+          <view class="brand-collar-tag" style="font-size: {{brand.name.length > 7 ? '8px' : '9px'}};">{{brand.name}}</view>
+        </view>
       </view>
-      <view class="brand-social">{{brand.member_text}}</view>
     </view>
 
     <view class="sort-row">

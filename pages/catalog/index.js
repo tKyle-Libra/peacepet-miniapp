@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 const palette = require('../../utils/color');
 const { iconFor } = require('../../utils/flavor_icon');
 const { roundsText } = require('../../utils/rounds');
@@ -39,6 +40,8 @@ Page({
   },
 
   onShow() {
+    track.pageShow('catalog');
+    this.schedulePackCheck();
     if (this.petReady) {
       if (this.data.tab === 'progress') this.loadProgress(this.data.progressMode);
       else this.loadCurrent();
@@ -70,9 +73,29 @@ Page({
     });
   },
 
+  schedulePackCheck() {
+    if (this.packCheckScheduled) return;
+    this.packCheckScheduled = true;
+    // 不阻塞首页：等首屏加载完再静默检查
+    setTimeout(() => {
+      if (this.packChecking || this.packOpened) return;
+      this.packChecking = true;
+      api.getPackPending().then((body) => {
+        const data = (body && body.data) || {};
+        this.packChecking = false;
+        if (data.has_pack && !this.packOpened) {
+          this.packOpened = true;
+          track.event('pack_trigger', { page: 'catalog', props: { source: 'home', count: (data.cards || []).length } });
+          tt.navigateTo({ url: '/pages/open-pack/open-pack' });
+        }
+      }).catch(() => { this.packChecking = false; });
+    }, 900);
+  },
+
   switchPet(e) {
     const pet = e.currentTarget.dataset.pet;
     if (!pet || pet === this.data.pet) return;
+    track.event('pet_switch', { page: 'catalog', props: { pet: pet } });
     this.setData({ pet: pet });
     try { tt.setStorageSync('peacepet_catalog_pet', pet); } catch (e) {}
     if (this.data.tab === 'progress') {
@@ -82,6 +105,10 @@ Page({
     }
     tt.pageScrollTo({ scrollTop: 0, duration: 0 });
   },
+
+  onHide() { track.flush(); },
+
+  onUnload() { track.flush(); },
 
   decorateBrands(raw) {
     return (raw || []).map((b) => {
@@ -231,6 +258,7 @@ Page({
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab;
     if (!tab || tab === this.data.tab) return;
+    track.event('catalog_tab', { page: 'catalog', props: { tab: tab } });
     this.setData({ tab: tab });
     this.updateTop();
     if (tab === 'progress') this.loadProgress(this.data.progressMode);
@@ -295,12 +323,16 @@ Page({
 
   openProgressBrand(e) {
     const id = e.currentTarget.dataset.id;
-    if (id) tt.navigateTo({ url: '/pages/catalog/brand?id=' + id + '&pet=' + this.data.pet });
+    if (id) {
+      track.event('brand_click', { page: 'catalog', target: String(id), props: { source: 'progress' } });
+      tt.navigateTo({ url: '/pages/catalog/brand?id=' + id + '&pet=' + this.data.pet });
+    }
   },
 
   openProgressProduct(e) {
     const ds = e.currentTarget.dataset || {};
     if (!ds.brand || !ds.id) return;
+    track.event('product_click', { page: 'catalog', target: String(ds.id), props: { brand_id: ds.brand, source: 'progress' } });
     if (String(ds.ready) === '0' || ds.ready === 0 || ds.ready === false) {
       tt.showToast({ title: '口味暂未开放，快让 PP 去补全口味吧', icon: 'none', duration: 2600 });
       return;
@@ -329,12 +361,17 @@ Page({
 
   openBrand(e) {
     const id = e.currentTarget.dataset.id;
-    if (id) tt.navigateTo({ url: '/pages/catalog/brand?id=' + id + '&pet=' + this.data.pet });
+    if (id) {
+      track.event('brand_click', { page: 'catalog', target: String(id), props: { source: 'home' } });
+      tt.navigateTo({ url: '/pages/catalog/brand?id=' + id + '&pet=' + this.data.pet });
+    }
   },
 
   openProduct(e) {
     const ds = e.currentTarget.dataset || {};
     if (!ds.brand || !ds.id) return;
+    track.event('product_click', { page: 'catalog', target: String(ds.id),
+      props: { brand_id: ds.brand, source: 'home', status: (String(ds.ready) === '1' ? 'ready' : 'unready') } });
     if (String(ds.ready) === '0' || ds.ready === 0 || ds.ready === false) {
       tt.showToast({ title: '口味暂未开放，快让 PP 去补全口味吧', icon: 'none', duration: 2600 });
       return;

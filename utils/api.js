@@ -124,8 +124,8 @@ function getCatalogProducts(sort, pet) {
   return withAuth('/catalog/products' + (q.length ? '?' + q.join('&') : ''), 'GET');
 }
 
-function getCatalogBrand(id) {
-  return withAuth('/catalog/brand/' + id, 'GET');
+function getCatalogBrand(id, pet) {
+  return withAuth('/catalog/brand/' + id + (pet ? '?pet=' + pet : ''), 'GET');
 }
 
 function getCatalogFlavor(id) {
@@ -144,6 +144,14 @@ function getReceipt(id) {
   return withAuth('/receipts/' + id, 'GET');
 }
 
+function getPackPending() {
+  return withAuth('/pack/pending', 'GET');
+}
+
+function ackPack() {
+  return withAuth('/pack/ack', 'POST');
+}
+
 function claimReceipt(date, last6) {
   return withAuth('/receipts/claim', 'POST', { date, last6 });
 }
@@ -160,4 +168,4 @@ function shortDate(date) {
   return p[0] + '年' + Number(p[1]) + '月' + Number(p[2]) + '日';
 }
 
-module.exports = { BASE_URL, login, getReceipts, getReceipt, claimReceipt, getProfile, getUserLevel, getCatalogOverview, getCatalogBrands, getCatalogProducts, getCatalogNearly, getCatalogCompleted, getCatalogBrand, getCatalogFlavor, saveProfile, money, shortDate };
+module.exports = { BASE_URL, login, getReceipts, getReceipt, claimReceipt, getProfile, getUserLevel, getCatalogOverview, getCatalogBrands, getCatalogProducts, getCatalogNearly, getCatalogCompleted, getCatalogBrand, getCatalogFlavor, getPackPending, ackPack, saveProfile, money, shortDate };

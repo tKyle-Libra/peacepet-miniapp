@@ -1,0 +1,52 @@
+<view class="pack-page">
+  <view class="pack-loading" tt:if="{{loading}}">正在打开卡包…</view>
+  <view class="pack-error" tt:if="{{error && !card}}">
+    <view class="pack-error-title">{{error}}</view>
+    <button class="pack-main-btn" bindtap="goBack">回首页</button>
+  </view>
+
+  <block tt:if="{{card}}">
+    <view class="pack-page-head">
+      <view class="pack-page-title">开包结果</view>
+      <view class="pack-skip-top" bindtap="close">跳过</view>
+    </view>
+
+    <view class="pack-card rarity-{{card.rarity}}" bindtap="next">
+      <view class="pack-card-head">
+        <view class="pack-logo">PEACEPET <text>图鉴</text></view>
+        <view class="pack-no">NO.{{packNo}}</view>
+      </view>
+
+      <view class="pack-hero {{card.animal_list.length > 1 ? 'two' : ''}}">
+        <view class="pack-halo"></view>
+        <view class="pack-animals {{card.animal_list.length > 1 ? 'two' : ''}}">
+          <view class="pack-animal animal-{{idx}}" tt:for="{{card.animal_list}}" tt:for-index="idx" tt:key="key">
+            <image class="pack-animal-img" src="{{item.url}}" mode="aspectFit"></image>
+            <view class="pack-collar" style="background: {{card.brand_color}};">
+              <view class="pack-collar-tag">{{card.brand_name}}</view>
+            </view>
+          </view>
+        </view>
+        <image class="pack-prop" src="{{card.prop_url}}" mode="aspectFit"></image>
+      </view>
+
+      <view class="pack-nameplate">
+        <view class="pack-name">{{card.display_name}}</view>
+        <view class="pack-sub">{{card.subtitle}}</view>
+      </view>
+
+      <view class="pack-detail">
+        <text>{{card.brand_name}} · 图鉴 +1</text>
+        <text class="pack-detail-pill">获得 ×1</text>
+      </view>
+    </view>
+
+    <view class="pack-footer">
+      <view class="pack-dots">
+        <view class="pack-dot {{index === idx ? 'active' : ''}}" tt:for="{{cards}}" tt:for-index="idx" tt:key="idx"></view>
+      </view>
+      <view class="pack-foot-hint">{{isLast ? '点按收下' : '点按继续'}}</view>
+      <button class="pack-main-btn" tt:if="{{isLast}}" catchtap="finish">收下</button>
+    </view>
+  </block>
+</view>

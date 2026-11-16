@@ -1,4 +1,5 @@
 const api = require('../../utils/api');
+const track = require('../../utils/track');
 const levels = require('../../utils/level');
 const { decorateReceipt } = require('../../utils/receipts');
 
@@ -28,16 +29,19 @@ Page({
   },
 
   onShow() {
+    track.pageShow('receipt_list');
     this.load(1);
     this.loadProfile();
     this.loadLevel();
   },
 
   onHide() {
+    track.flush();
     this.closeAllPopups();
   },
 
   onUnload() {
+    track.flush();
     this.closeAllPopups();
   },
 
@@ -69,6 +73,7 @@ Page({
       const d = (body && body.data) || {};
       const nickname = String(d.nickname || '').trim();
       const avatarUrl = String(d.avatar_url || '').trim();
+      if (d.id) getApp().globalData.userId = Number(d.id) || 0;
       this.setData({
         nickname,
         avatarUrl
@@ -117,10 +122,12 @@ Page({
   openReceipt(e) {
     const id = e.currentTarget.dataset.id;
     if (!id) return;
+    track.event('receipt_click', { page: 'receipt_list', target: String(id) });
     tt.navigateTo({ url: '/pages/detail/detail?id=' + id });
   },
 
   goCatalog() {
+    track.event('catalog_tab', { page: 'receipt_list', props: { tab: 'catalog', from: 'receipt_list' } });
     tt.navigateTo({ url: '/pages/catalog/index' });
   },
 
